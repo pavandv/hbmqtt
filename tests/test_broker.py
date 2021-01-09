@@ -4,7 +4,7 @@
 import asyncio
 import logging
 import unittest
-from unittest.mock import patch, call
+from unittest.mock import patch, call, MagicMock
 
 from hbmqtt.adapters import StreamReaderAdapter, StreamWriterAdapter
 from hbmqtt.broker import (
@@ -44,13 +44,13 @@ test_config = {
     }
 }
 
+# monkey patch MagicMock
+# taken from https://stackoverflow.com/questions/51394411/python-object-magicmock-cant-be-used-in-await-expression
+async def async_magic():
+    pass
 
-#class AsyncMock(MagicMock):
-#    def __await__(self, *args, **kwargs):
-#            future = asyncio.Future()
-#            future.set_result(self)
-#            result = await future
-#            return result
+MagicMock.__await__ = lambda x: async_magic().__await__()
+
 
 class BrokerTest(unittest.TestCase):
     def setUp(self):
